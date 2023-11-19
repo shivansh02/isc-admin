@@ -4,8 +4,6 @@ import { useRouter } from 'next/navigation'; // Updated import statement
 import NavSignUp from 'components/NavSignUp.jsx';
 import styles from './page.module.css';
 import img from 'public/landing.png';
-import { createClient } from "@supabase/supabase-js";
-
 
 export default function Login() {
   const router = useRouter();
@@ -15,39 +13,15 @@ export default function Login() {
   });
   const [username, setUsername] = useState(null);
 
-  const supabaseUrl = "https://uxklmuwfhfwrwfvtjszi.supabase.co";
-  const supabaseKey =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV4a2xtdXdmaGZ3cndmdnRqc3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTk3MjM4MDYsImV4cCI6MjAxNTI5OTgwNn0.jOSjVvG_40c-sDKi8wrL_aJQPGMf6M48pwB_NlqhlDU";
-
-
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  useEffect(() => {
-    const fetchUsername = async () => {
-      // Get user_id from the cookie
-      const userId = document.cookie
-        .split("; ")
-        .find((row) => row.startsWith("userId"))
-        ?.split("=")[1];
-
-      if (userId) {
-        // Fetch user data from Supabase based on user_id
-        const { data, error } = await supabase
-          .from("your_users_table_name") // Replace with your actual users table name
-          .select("username")
-          .eq("user_id", userId)
-          .single();
-
-        if (data) {
-          setUsername(data.username);
-        } else if (error) {
-          console.error("Error fetching username:", error.message);
-        }
-      }
-    };
-
-    fetchUsername();
-  }, []); // Empty dependency array ensures the effect runs only once on mount
+  const styling = {
+    background: '#FEF7ED',
+    height: '100vh',
+    backgroundImage: `url(${img.src})`,
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    zIndex: '-1',
+  };
 
   const handleChange = (event) => {
     setFormData((prevFormData) => {
@@ -58,74 +32,12 @@ export default function Login() {
     });
   };
 
-  async function fetchUserId(email) {
-    try {
-      const { data, error } = await supabase
-        .from('users')
-        .select('user_id')
-        .eq('email', email);
-
-      if (error) {
-        console.error('Error fetching user ID:', error.message);
-        return null;
-      } else {
-        if (data && data.length > 0) {
-          console.log('User ID fetched:', data[0].user_id);
-          return data[0].user_id;
-        } else {
-          console.error('User ID not found.');
-          return null;
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching user ID:', error.message);
-      return null;
-    }
-  }
-
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email,
-        password: formData.password,
-      });
+    // Remove the login logic
 
-      if (error) {
-        throw error;
-      } else {
-        const userId = await fetchUserId(formData.email);
-
-        console.log('User ID from users table:', userId);
-
-        if (userId !== null) {
-          document.cookie = `userId=${userId}`;
-        }
-
-      }
-      router.push('/');
-    } catch (error) {
-      alert(error.error_description || error.message);
-    }
-  };
-
-  const signOut = async () => {
-    try {
-      await supabase.auth.signOut();
-      router.push('/signup');
-    } catch (error) {
-      console.error('Sign Out Error:', error);
-    }
-  };
-
-  const styling = {
-    background: '#FEF7ED',
-    height: '100vh',
-    backgroundImage: `url(${img.src})`,
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    zIndex: '-1',
+    // Redirect to the "/bookings" page
+    router.push('/bookings');
   };
 
   return (
@@ -158,9 +70,7 @@ export default function Login() {
             >
               Login
             </button>
-            <button onClick={signOut} className='mt-4 text-emerald-500 hover:underline cursor-pointer'>
-              Sign Out
-            </button>
+            {/* Remove the Sign Out button */}
           </form>
         </div>
       </div>
